@@ -137,7 +137,7 @@ def main(args=None):
             finally:
                 try:
                     tbmaster.release_timebase()
-                except jack.JackError:
+                except (AttributeError, jack.JackError):
                     # another JACK client might have grabbed timebase master
                     pass
         else:
