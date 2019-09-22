@@ -12,11 +12,19 @@ from setuptools import setup
 def read(*args):
     return open(join(dirname(__file__), *args)).read()
 
-scripts = [
-    ('jack-timebase-master', "transport.timebase_master"),
-    ('jack-transporter', "transport.transporter"),
-    ('jack-midi-to-transport', "transport.midi_to_transport"),
-]
+scripts = []
+for name, mod, *extras in [
+        ('jack-timebase-master', "transport.timebase_master"),
+        ('jack-transporter', "transport.transporter"),
+        ('jack-midi-to-transport', "transport.midi_to_transport"),
+        ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi")]:
+    spec = "{} = jackaudiotools.{}:main".format(name, mod)
+
+    if extras:
+        spec += " [{}]".format(",".join(extras))
+
+    scripts.append(spec)
+
 
 setup(
     name='jack-audio-tools',
@@ -41,10 +49,7 @@ setup(
     },
     python_requires='>=3',
     entry_points={
-        'console_scripts': [
-            "{} = jackaudiotools.{}:main".format(name, mod)
-            for name, mod in scripts
-        ]
+        'console_scripts': scripts
     },
     zip_safe=False,
 )
