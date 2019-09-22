@@ -27,7 +27,7 @@ setup(
     url="https://github.com/SpotlightKid/jack-audio-tools",
     license='MIT License',
     author="Christopher Arndt",
-    autor_email="info@chrisarndt.de",
+    author_email="info@chrisarndt.de",
     packages=[
         'jackaudiotools.transport',
     ],
