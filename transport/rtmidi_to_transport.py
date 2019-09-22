@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # rtmidi_to_transport.py
 #
@@ -115,12 +114,12 @@ def main(args=None):
         default=0x7F,
         help="MIDI SysEx device number (0-127, default: %(default)s)")
 
-    args = ap.parse_args(args if args is not None else sys.argv[1:])
+    args = ap.parse_args(args)
 
     try:
         client = JackMidiToTransport(args.client_name, max(0, min(args.device, 127)))
     except jack.JackError as exc:
-        return "Could not create JACK client: %s" % exc
+        return "Could not create JACK client: {}".format(exc)
 
     try:
         print('Press Ctrl-C to quit... ')

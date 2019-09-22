@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 #
 #  transporter.py
 #
@@ -34,26 +33,26 @@ def main(args=None):
         choices=['query', 'rewind', 'start', 'status', 'stop', 'toggle'],
         help="Transport command")
 
-    args = ap.parse_args(args if args is not None else sys.argv[1:])
+    args = ap.parse_args(args)
 
     try:
         client = jack.Client(args.client_name)
     except jack.JackError as exc:
-        return "Could not create JACK client: %s" % exc
+        return "Could not create JACK client: {}".format(exc)
 
     state = client.transport_state
     result = 0
 
     if args.command == 'status':
-        print("JACK transport is %s." % STATE_LABELS[state._code])
+        print("JACK transport is {}.".format(STATE_LABELS[state]))
         result = 1 if state == jack.STOPPED else 0
     elif args.command == 'query':
-        print("State: %s" % STATE_LABELS[state._code])
+        print("State: {}".format(STATE_LABELS[state]))
         info = client.transport_query()[1]
 
         for field in sorted(info):
             label = string.capwords(field.replace('_', ' '))
-            print("%s: %s" % (label, info[field]))
+            print("{}: {}".format(label, info[field]))
 
         result = 1 if state == jack.STOPPED else 0
     elif args.command == 'start':
