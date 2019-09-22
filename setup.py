@@ -36,6 +36,9 @@ setup(
     install_requires=[
         "JACK-Client >= 0.5.0",
     ],
+    extras_require={
+        'rtmidi': ["python-rtmidi"],
+    },
     python_requires='>=3',
     entry_points={
         'console_scripts': [
