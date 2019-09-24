@@ -106,7 +106,7 @@ def main(args=None):
         default=120.0,
         help="Tempo in beats per minute (default: %(default)s)")
 
-    args = ap.parse_args(args if args is not None else sys.argv[1:])
+    args = ap.parse_args(args)
 
     try:
         beats_per_bar, beat_type = (int(x) for x in args.meter.split('/', 1))
@@ -144,4 +144,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]) or 0)
+    sys.exit(main() or 0)

@@ -115,7 +115,7 @@ def main(args=None):
         default=0x7F,
         help="MIDI SysEx device number (0-127, default: %(default)s)")
 
-    args = ap.parse_args(args if args is not None else sys.argv[1:])
+    args = ap.parse_args(args)
 
     try:
         client = JackMidiToTransport(args.client_name, max(0, min(args.device, 127)))
@@ -132,4 +132,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]) or 0)
+    sys.exit(main() or 0)

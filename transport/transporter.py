@@ -34,7 +34,7 @@ def main(args=None):
         choices=['query', 'rewind', 'start', 'status', 'stop', 'toggle'],
         help="Transport command")
 
-    args = ap.parse_args(args if args is not None else sys.argv[1:])
+    args = ap.parse_args(args)
 
     try:
         client = jack.Client(args.client_name)
@@ -75,4 +75,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]) or 0)
+    sys.exit(main() or 0)
