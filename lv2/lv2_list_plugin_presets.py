@@ -11,10 +11,12 @@ RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema'
 
 
 def main(args=None):
+    args = sys.argv[1:] if args is None else args
+
     if args:
         plugin_uri = args[0]
     else:
-        plugin_uri = 'http://kunz.corrupt.ch/products/tal-noisemaker'
+        return "Usage: lv2-list-plugin-presets <plugin URI>"
 
     world = lilv.World()
     world.load_all()
@@ -48,4 +50,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]) or 0)
+    sys.exit(main() or 0)
