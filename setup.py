@@ -17,7 +17,9 @@ for name, mod, *extras in [
         ('jack-timebase-master', "transport.timebase_master"),
         ('jack-transporter', "transport.transporter"),
         ('jack-midi-to-transport', "transport.midi_to_transport"),
-        ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi")]:
+        ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi"),
+        #('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets", "lilv")]:
+        ('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets")]:
     spec = "{} = jackaudiotools.{}:main".format(name, mod)
 
     if extras:
@@ -38,6 +40,7 @@ setup(
     author_email="info@chrisarndt.de",
     packages=[
         'jackaudiotools.transport',
+        'jackaudiotools.lv2',
     ],
     package_dir={'jackaudiotools': ''},
     include_package_data=True,
@@ -45,6 +48,8 @@ setup(
         "JACK-Client >= 0.5.0",
     ],
     extras_require={
+        # unfortunately, 'lilv' is not registered on PyPI
+        #'lilv': ["lilv"],
         'rtmidi': ["python-rtmidi"],
     },
     python_requires='>=3',
