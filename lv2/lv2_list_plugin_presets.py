@@ -14,7 +14,7 @@ def main(args=None):
     args = sys.argv[1:] if args is None else args
 
     if args:
-        plugin_uri = args[0]
+        uri = args[0]
     else:
         return "Usage: lv2-list-plugin-presets <plugin URI>"
 
@@ -23,10 +23,10 @@ def main(args=None):
     preset_ns = lilv.Namespace(world, PRESET_NS)
     rdfs_ns = lilv.Namespace(world, RDFS_NS)
     plugins = world.get_all_plugins()
-    plugin_uri = world.new_uri(plugin_uri)
+    plugin_uri = world.new_uri(uri)
 
     if plugin_uri is None or plugin_uri not in plugins:
-        return "Plugin with URI '%s' not found" % plugin_uri
+        return "Plugin with URI '%s' not found" % uri
 
     plugin = plugins[plugin_uri]
     presets = plugin.get_related(getattr(preset_ns, '#Preset'))
