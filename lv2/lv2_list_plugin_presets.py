@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""List all preset URIs of an LV2 plugin with the given URI."""
+"""List all presets of an LV2 plugin with the given URI."""
 
 import sys
 import lilv
@@ -34,7 +34,6 @@ def main(args=None):
     preset_list = []
 
     for preset in presets:
-        res = world.load_resource(preset)
         labels = world.find_nodes(preset, getattr(rdfs_ns, '#label'), None)
 
         if labels:
