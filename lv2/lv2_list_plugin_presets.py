@@ -6,8 +6,8 @@ import sys
 import lilv
 
 
-PRESET_NS = 'http://lv2plug.in/ns/ext/presets'
-RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema'
+PRESET_NS = 'http://lv2plug.in/ns/ext/presets#'
+RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema#'
 
 
 def main(args=None):
@@ -29,18 +29,18 @@ def main(args=None):
         return "Plugin with URI '%s' not found" % uri
 
     plugin = plugins[plugin_uri]
-    presets = plugin.get_related(getattr(preset_ns, '#Preset'))
+    presets = plugin.get_related(preset_ns.Preset)
 
     preset_list = []
 
     for preset in presets:
-        labels = world.find_nodes(preset, getattr(rdfs_ns, '#label'), None)
+        labels = world.find_nodes(preset, rdfs_ns.label, None)
 
         if labels:
             label = str(labels[0])
         else:
             label = str(preset)
-            print("Preset '&s' has no rdfs:label" % preset, file=sys.stderr)
+            print("Preset '%s' has no rdfs:label" % preset, file=sys.stderr)
 
         preset_list.append((label, str(preset)))
 
