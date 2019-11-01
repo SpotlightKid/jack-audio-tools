@@ -19,7 +19,9 @@ for name, mod, *extras in [
         ('jack-midi-to-transport', "transport.midi_to_transport"),
         ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi"),
         #('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets", "lilv")]:
-        ('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets")]:
+        ('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets"),
+        ('lv2grep', "lv2.lv2grep"),
+    ]:
     spec = "{} = jackaudiotools.{}:main".format(name, mod)
 
     if extras:
