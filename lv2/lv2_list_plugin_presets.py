@@ -6,8 +6,7 @@ import sys
 import lilv
 
 
-PRESET_NS = 'http://lv2plug.in/ns/ext/presets#'
-RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema#'
+NS_PRESET = 'http://lv2plug.in/ns/ext/presets#'
 
 
 def main(args=None):
@@ -20,8 +19,7 @@ def main(args=None):
 
     world = lilv.World()
     world.load_all()
-    preset_ns = lilv.Namespace(world, PRESET_NS)
-    rdfs_ns = lilv.Namespace(world, RDFS_NS)
+    preset_ns = lilv.Namespace(world, NS_PRESET)
     plugins = world.get_all_plugins()
     plugin_uri = world.new_uri(uri)
 
@@ -34,7 +32,7 @@ def main(args=None):
     preset_list = []
 
     for preset in presets:
-        labels = world.find_nodes(preset, rdfs_ns.label, None)
+        labels = world.find_nodes(preset, world.ns.rdfs.label, None)
 
         if labels:
             label = str(labels[0])
