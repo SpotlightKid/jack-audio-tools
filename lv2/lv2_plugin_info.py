@@ -3,11 +3,16 @@
 
 import os
 from math import fmod
+from operator import itemgetter
 from os.path import dirname
 
 import lilv
 
 
+NS_PRESET = 'http://lv2plug.in/ns/ext/presets#'
+NS_MOD = "http://moddevices.com/ns/mod#"
+NS_PORT_PROPERTIES = "http://lv2plug.in/ns/ext/port-props#"
+NS_UNITS = "http://lv2plug.in/ns/extensions/units#"
 
 LV2_CATEGORIES = {
     'AllpassPlugin': ('Filter', 'Allpass'),
@@ -432,11 +437,31 @@ def _get_plugin_ports(ctx, plugin):
     return ports
 
 
+def _get_plugin_presets(ctx, plugin):
+    world = ctx.world
+    presets = plugin.get_related(world.ns.presets.Preset)
+    preset_list = []
+
+    for preset in presets:
+        labels = world.find_nodes(preset, world.ns.rdfs.label, None)
+
+        if labels:
+            label = str(labels[0])
+        else:
+            label = None
+            ctx.errors.append("Preset '%s' has no rdfs:label" % preset)
+
+        preset_list.append({'label': label, 'uri': str(preset)})
+
+    return sorted(preset_list, key=itemgetter('label'))
+
+
 def _get_plugin_info(ctx, plugin):
     world = ctx.world
-    world.ns.mod = lilv.Namespace(world, "http://moddevices.com/ns/mod#")
-    world.ns.pprops = lilv.Namespace(world, "http://lv2plug.in/ns/ext/port-props#")
-    world.ns.units = lilv.Namespace(world, "http://lv2plug.in/ns/extensions/units#")
+    world.ns.mod = lilv.Namespace(world, NS_MOD)
+    world.ns.pprops = lilv.Namespace(world, NS_PORT_PROPERTIES)
+    world.ns.units = lilv.Namespace(world, NS_UNITS)
+    world.ns.presets = lilv.Namespace(world, NS_PRESET)
 
     ctx.errors = errors = []
     ctx.warnings = warnings = []
@@ -554,6 +579,9 @@ def _get_plugin_info(ctx, plugin):
     # ports
     ports = _get_plugin_ports(ctx, plugin)
 
+    # presets
+    presets = _get_plugin_presets(ctx, plugin)
+
     return {
         'uri': node2str(uri),
         'name': node2str(name),
@@ -575,7 +603,7 @@ def _get_plugin_info(ctx, plugin):
         'bundles': sorted(bundles),
         #'ui': ui,
         'ports': ports,
-        #'presets': presets,
+        'presets': presets,
         'errors': sorted(errors),
         'warnings': sorted(warnings),
     }
@@ -595,7 +623,6 @@ def get_plugins_info(uri=None):
         return _get_plugin_info(ctx, plugins[uri])
     else:
         return [_get_plugin_info(ctx, p) for p in plugins]
-
 
 
 if __name__ == '__main__':
