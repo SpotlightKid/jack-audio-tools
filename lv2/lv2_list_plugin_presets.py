@@ -32,6 +32,7 @@ def main(args=None):
     preset_list = []
 
     for preset in presets:
+        world.load_resource(preset)
         labels = world.find_nodes(preset, world.ns.rdfs.label, None)
 
         if labels:
