@@ -6,7 +6,7 @@ import sys
 import lilv
 
 
-NS_PRESET = 'http://lv2plug.in/ns/ext/presets#'
+NS_PRESETS = 'http://lv2plug.in/ns/ext/presets#'
 
 
 def main(args=None):
@@ -19,16 +19,20 @@ def main(args=None):
 
     world = lilv.World()
     world.load_all()
-    preset_ns = lilv.Namespace(world, NS_PRESET)
+    preset_ns = lilv.Namespace(world, NS_PRESETS)
     plugins = world.get_all_plugins()
-    plugin_uri = world.new_uri(uri)
 
-    if plugin_uri is None or plugin_uri not in plugins:
-        return "Plugin with URI '%s' not found" % uri
+    try:
+        plugin_uri = world.new_uri(uri)
+    except ValueError:
+        return "Invalid URI '%s'." % uri
 
-    plugin = plugins[plugin_uri]
+    try:
+        plugin = plugins[plugin_uri]
+    except KeyError:
+        return "Plugin with URI '%s' not found." % uri
+
     presets = plugin.get_related(preset_ns.Preset)
-
     preset_list = []
 
     for preset in presets:
@@ -44,7 +48,7 @@ def main(args=None):
         preset_list.append((label, str(preset)))
 
     for preset in sorted(preset_list):
-        print("%s: %s" % preset)
+        print("Label: %s\nURI: %s\n" % preset)
 
 
 if __name__ == '__main__':
