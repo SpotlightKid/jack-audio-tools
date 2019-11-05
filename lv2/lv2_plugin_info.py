@@ -3,7 +3,6 @@
 
 import os
 from math import fmod
-from operator import itemgetter
 from os.path import dirname
 
 import lilv
@@ -454,7 +453,7 @@ def _get_plugin_presets(ctx, plugin):
 
         preset_list.append({'label': label, 'uri': str(preset)})
 
-    return sorted(preset_list, key=itemgetter('label'))
+    return sorted(preset_list, key=lambda x: x['label'] or '')
 
 
 def _get_plugin_info(ctx, plugin):
