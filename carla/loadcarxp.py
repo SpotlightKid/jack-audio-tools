@@ -7,7 +7,7 @@ import sys
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from typing import List
+from typing import Dict, List
 
 
 log = logging.getLogger(__name__)
@@ -24,10 +24,12 @@ def is_bool(s):
 
     return bool(s)
 
+
 def elem_text(elem):
     if elem is not None:
         return elem.text.strip()
     return None
+
 
 @dataclass
 class Param:
@@ -35,6 +37,8 @@ class Param:
     name: str
     symbol: str
     value: float
+    midi_cc: int = -1
+    midi_channel: int = -1
 
 
 @dataclass
@@ -52,7 +56,7 @@ class PluginInstance:
     type: str = 'LV2'
     active: bool = True
     params: List[Param] = field(default_factory=list)
-    properties: List[Property] = field(default_factory=list)
+    properties: Dict = field(default_factory=dict)
 
 
 @dataclass
@@ -92,6 +96,8 @@ def parse_carxp(filename, ignore_carla_properties=False):
         )
 
         for paramnode in pnode.findall('./Data/Parameter'):
+            midi_cc = paramnode.find('MidiCC')
+            midi_channel = paramnode.find('MidiChannel')
             value = elem_text(paramnode.find('Value'))
 
             if value:
@@ -102,7 +108,9 @@ def parse_carxp(filename, ignore_carla_properties=False):
                     index=int(elem_text(paramnode.find('Index'))),
                     name=elem_text(paramnode.find('Name')),
                     symbol=elem_text(paramnode.find('Symbol')),
-                    value=value
+                    value=value,
+                    midi_cc=int(midi_cc.text) if midi_cc is not None else -1,
+                    midi_channel=int(midi_channel.text) if midi_channel is not None else -1
                 )
             )
 
@@ -112,12 +120,11 @@ def parse_carxp(filename, ignore_carla_properties=False):
             if ignore_carla_properties and type.startswith(NS_CARLA):
                 continue
 
-            plugin.properties.append(
-                Property(
-                    type=type,
-                    key=elem_text(propnode.find('Key')),
-                    value=elem_text(propnode.find('Value'))
-                )
+            key = propnode.find('Key').text.strip()
+            plugin.properties[key] = Property(
+                type=type,
+                key=key,
+                value=elem_text(propnode.find('Value'))
             )
 
         plugins[plugin.name] = plugin

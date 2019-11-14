@@ -59,7 +59,7 @@ def create_lv2_preset(label, plugin):
     if plugin.properties:
         state = BNode()
 
-        for prop in plugin.properties:
+        for prop in plugin.properties.values():
             if prop.type == str(NS.atom.Path):
                 value = URIRef(prop.value)
             else:
@@ -104,9 +104,8 @@ def link_or_copy_path(path, dst, always_copy=False):
             else:
                 path = basename(dst)
     else:
-        log.warning("Path '%s' referenced by '%s' does not exist locally. "
-                    "The preset might not restore the full state of the plugin.",
-                    path, plugin.uri)
+        log.warning("Path '%s' does not exist locally. The preset might not restore the full "
+                    "state of the plugin.", path)
 
     return path
 
@@ -131,7 +130,7 @@ def main(args=None):
 
     args = ap.parse_args(args)
 
-    logging.basicConfig(level=logging.Debug if args.debug else logging.INFO,
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
                         format="%(levelname)s: %(message)s")
 
     project = parse_carxp(args.carlaproject, ignore_carla_properties=True)
@@ -164,7 +163,7 @@ def main(args=None):
 
         os.mkdir(bundle_path)
 
-        for prop in plugin.properties:
+        for prop in plugin.properties.values():
             if prop.type == str(NS.atom.Path):
                 path = prop.value
 
