@@ -9,21 +9,21 @@ import sys
 from os.path import basename, exists, expanduser, isabs, isdir, isfile, join, splitext
 
 import rdflib
-from rdflib import Graph, Literal, BNode, RDF, RDFS, URIRef
-from rdflib.namespace import DC, FOAF, Namespace, NamespaceManager, XSD
+from rdflib import Graph, Literal, BNode, URIRef
+from rdflib.namespace import Namespace, NamespaceManager, RDF, RDFS, XSD
 
-from loadcarxp import parse_carxp
+from .loadcarxp import parse_carxp
 
 
 log = logging.getLogger('lv2preset')
 
 
 class NS:
-    atom   = rdflib.Namespace('http://lv2plug.in/ns/ext/atom#')
-    lv2    = rdflib.Namespace('http://lv2plug.in/ns/lv2core#')
-    patch  = rdflib.Namespace('http://lv2plug.in/ns/ext/patch#')
-    pset   = rdflib.Namespace('http://lv2plug.in/ns/ext/presets#')
-    state    = rdflib.Namespace('http://lv2plug.in/ns/ext/state#')
+    atom = rdflib.Namespace('http://lv2plug.in/ns/ext/atom#')
+    lv2 = rdflib.Namespace('http://lv2plug.in/ns/lv2core#')
+    patch = rdflib.Namespace('http://lv2plug.in/ns/ext/patch#')
+    pset = rdflib.Namespace('http://lv2plug.in/ns/ext/presets#')
+    state = rdflib.Namespace('http://lv2plug.in/ns/ext/state#')
 
     @classmethod
     def bind_all(cls, nsmanager):
