@@ -9,8 +9,9 @@ import lilv
 NS_PRESETS = 'http://lv2plug.in/ns/ext/presets#'
 
 
-def print_presets(world, plugin):
-    presets = plugin.get_related(world.ns.presets.Preset)
+def get_presets(world, plugin):
+    ns_presets = lilv.Namespace(world, NS_PRESETS)
+    presets = plugin.get_related(ns_presets.Preset)
     preset_list = []
 
     for preset in presets:
@@ -21,13 +22,10 @@ def print_presets(world, plugin):
             label = str(labels[0])
         else:
             label = None
-            print("Preset '%s' has no rdfs:label" % preset, file=sys.stderr)
 
         preset_list.append((label, str(preset)))
 
-    for label, preset_uri in sorted(preset_list, key=lambda x: x[0] or ''):
-        print("Label: %s" % label or "")
-        print("URI: %s\n" % preset_uri)
+    return preset_list
 
 
 def main(args=None):
@@ -40,7 +38,6 @@ def main(args=None):
 
     world = lilv.World()
     world.load_all()
-    world.ns.presets = lilv.Namespace(world, NS_PRESETS)
     plugins = world.get_all_plugins()
 
     try:
@@ -50,7 +47,13 @@ def main(args=None):
     except ValueError as exc:
         return "error: %s" % exc
 
-    print_presets(world, plugin)
+    presets = get_presets(world, plugin)
+    for label, preset_uri in sorted(presets, key=lambda x: x[0] or ''):
+        if label is None:
+            print("Preset '%s' has no rdfs:label" % preset, file=sys.stderr)
+
+        print("Label: %s" % label or "")
+        print("URI: %s\n" % preset_uri)
 
 
 if __name__ == '__main__':
