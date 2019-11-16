@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Export plugin settings from a Carla project file (.carxp) as LV2 preset bundles."""
 
 import argparse
 import logging
@@ -111,7 +112,7 @@ def link_or_copy_path(path, dst, always_copy=False):
 
 
 def main(args=None):
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('-d', '--debug', action='store_true',
                     help="Enable debug log messages")
     ap.add_argument('-l', '--label',
