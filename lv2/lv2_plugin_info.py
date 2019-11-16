@@ -86,7 +86,7 @@ def node2str(node, strip=True):
 
     By default, strips whitespace surrounding string value.
 
-    If passed node is None, return None.
+    If passed node is None, returns None.
 
     """
     if node is not None:
@@ -103,7 +103,7 @@ def getfirst(obj, uri, strip=True):
 
     By default, strips whitespace surrounding string value.
 
-    If colection is empty, returns None
+    If collection is empty, returns None.
 
     """
     data = obj.get_value(uri)
