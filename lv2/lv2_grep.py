@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+Print URIs of all installed LV2 plugins matching the given regular expression.
+"""
 
 import argparse
 import re
