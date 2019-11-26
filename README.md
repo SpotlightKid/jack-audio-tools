@@ -14,7 +14,7 @@ automatically, when you install the `jack-audio-tools` distribution via `pip`:
     pip install jack-audio-tools
 
 
-### `midi_to_transport`
+### `jack-midi-to-transport`
 
 JACK client which allows to control transport state via MIDI.
 
@@ -48,7 +48,7 @@ If the client's device number is set to 127 (the default), it matches all
 MMC message device numbers.
 
 
-### `rtmidi_to_transport`
+### `jack-rtmidi-to-transport`
 
 JACK client which allows to control transport state via MIDI.
 
@@ -63,14 +63,14 @@ To use it, specify the `rtmidi` extra dependency when installing the
     pip install "jack-audio-tools[rtmidi]"
 
 
-### `timebase_master`
+### `jack-timebase-master`
 
 A simple JACK timebase master, which provides  musical timing related
 information (i.e. currents bar, beats per bar, beat denominator, BPM etc.)
 to other JACK clients.
 
 
-### `transporter`
+### `jack-transporter`
 
 Query or change the JACK transport state.
 
