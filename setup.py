@@ -20,13 +20,13 @@ for name, mod, *extras in [
         ('jack-midi-to-transport', "transport.midi_to_transport"),
         ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi"),
         #('lv2-grep', "lv2.lv2_grep", "lilv"),
-        ('lv2-grep', "lv2.lv2_grep"),
+        ('lv2-grep', "lv2.grep"),
         #('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets", "lilv")]:
-        ('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets"),
+        ('lv2-list-plugin-presets', "lv2.list_plugin_presets"),
         #('lv2-plugin-info', "lv2.lv2_plugin_info", "lilv"),
-        ('lv2-plugin-info', "lv2.lv2_plugin_info"),
+        ('lv2-plugin-info', "lv2.plugin_info"),
         #('lv2-plugin-uris', "lv2.lv2_plugin_uris", "lilv"),
-        ('lv2-plugin-uris', "lv2.lv2_plugin_uris"),
+        ('lv2-plugin-uris', "lv2.plugin_uris"),
     ]:
     spec = "{} = jackaudiotools.{}:main".format(name, mod)
 
