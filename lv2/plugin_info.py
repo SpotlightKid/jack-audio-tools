@@ -8,9 +8,10 @@ from os.path import dirname
 import lilv
 
 
-NS_PRESET = 'http://lv2plug.in/ns/ext/presets#'
 NS_MOD = "http://moddevices.com/ns/mod#"
+NS_PATCH = 'http://lv2plug.in/ns/ext/patch#'
 NS_PORT_PROPERTIES = "http://lv2plug.in/ns/ext/port-props#"
+NS_PRESET = 'http://lv2plug.in/ns/ext/presets#'
 NS_UNITS = "http://lv2plug.in/ns/extensions/units#"
 
 LV2_CATEGORIES = {
@@ -86,7 +87,7 @@ def node2str(node, strip=True):
 
     By default, strips whitespace surrounding string value.
 
-    If passed node is None, returns None.
+    If passed node is None, return None.
 
     """
     if node is not None:
@@ -103,7 +104,7 @@ def getfirst(obj, uri, strip=True):
 
     By default, strips whitespace surrounding string value.
 
-    If collection is empty, returns None.
+    If collection is empty, return None.
 
     """
     data = obj.get_value(uri)
@@ -289,12 +290,12 @@ def _get_port_info(ctx, port):
             if "CV" not in types and designation != str(world.ns.lv2.latency):
                 errors.append("port '%s' is missing value ranges" % portname)
 
-        scale_points = port.get_scale_points()
+        scalepoints = port.get_scale_points()
 
-        if scale_points is not None:
+        if scalepoints is not None:
             scalepoints_unsorted = []
 
-            for sp in scale_points:
+            for sp in scalepoints:
                 label = node2str(sp.get_label())
                 value = sp.get_value()
 
@@ -425,13 +426,13 @@ def _get_plugin_ports(ctx, plugin):
         types, info = _get_port_info(ctx, port)
         info['index'] = i
 
-        isInput = "Input" in types
-        types.remove("Input" if isInput else "Output")
+        is_input = "Input" in types
+        types.remove("Input" if is_input else "Output")
 
         for typ in [typl.lower() for typl in types]:
             if typ not in ports.keys():
                 ports[typ] = { 'input': [], 'output': [] }
-            ports[typ]["input" if isInput else "output"].append(info)
+            ports[typ]["input" if is_input else "output"].append(info)
 
     return ports
 
@@ -456,12 +457,51 @@ def _get_plugin_presets(ctx, plugin):
     return sorted(preset_list, key=lambda x: x['label'] or '')
 
 
+def _get_plugin_properties(ctx, plugin_uri):
+    world = ctx.world
+
+    properties = {}
+    readable = [(node, False)
+                for node in world.find_nodes(plugin_uri, world.ns.patch.readable, None)]
+    writeable = [(node, True)
+                 for node in world.find_nodes(plugin_uri, world.ns.patch.writable, None)]
+
+    for prop_uri, is_writable in readable + writeable:
+        prop_node = world.find_nodes(prop_uri, world.ns.rdf.type, world.ns.lv2.Parameter)
+
+        if not prop_node:
+            ctx.errors.append(
+                "Could not find defintion of property '%s'." % prop_uri)
+            continue
+
+        label = world.find_nodes(prop_uri, world.ns.rdfs.label, None)
+
+        if label:
+            label = str(label[0])
+
+        range_ = world.find_nodes(prop_uri, world.ns.rdfs.range, None)
+
+        if range_:
+            range_ = str(range_[0])
+
+        prop_uri = str(prop_uri)
+        properties[prop_uri] = {
+            'uri': prop_uri,
+            'label': label,
+            'type': range_,
+            'writable': is_writable,
+        }
+
+    return properties
+
+
 def _get_plugin_info(ctx, plugin):
     world = ctx.world
     world.ns.mod = lilv.Namespace(world, NS_MOD)
+    world.ns.patch = lilv.Namespace(world, NS_PATCH)
     world.ns.pprops = lilv.Namespace(world, NS_PORT_PROPERTIES)
-    world.ns.units = lilv.Namespace(world, NS_UNITS)
     world.ns.presets = lilv.Namespace(world, NS_PRESET)
+    world.ns.units = lilv.Namespace(world, NS_UNITS)
 
     ctx.errors = errors = []
     ctx.warnings = warnings = []
@@ -473,6 +513,9 @@ def _get_plugin_info(ctx, plugin):
         errors.append("plugin uri is missing or invalid")
     elif str(uri).startswith("file:"):
         errors.append("plugin uri is local, and thus not suitable for redistribution")
+
+    # load all resources in bundle
+    world.load_resource(uri)
 
     # name
     name = plugin.get_name()
@@ -582,6 +625,9 @@ def _get_plugin_info(ctx, plugin):
     # presets
     presets = _get_plugin_presets(ctx, plugin)
 
+    # properties
+    properties = _get_plugin_properties(ctx, uri)
+
     return {
         'uri': node2str(uri),
         'name': node2str(name),
@@ -604,6 +650,7 @@ def _get_plugin_info(ctx, plugin):
         #'ui': ui,
         'ports': ports,
         'presets': presets,
+        'properties': properties,
         'errors': sorted(errors),
         'warnings': sorted(warnings),
     }
@@ -625,11 +672,10 @@ def get_plugins_info(uri=None):
         return [_get_plugin_info(ctx, p) for p in plugins]
 
 
-if __name__ == '__main__':
+def main(args=None):
     import argparse
     import pprint
     import json
-    import sys
 
     ap = argparse.ArgumentParser()
     ap.add_argument(
@@ -645,7 +691,7 @@ if __name__ == '__main__':
         nargs='?',
         metavar='URI', help='Plugin URI')
 
-    args = ap.parse_args()
+    args = ap.parse_args(args)
     plugin_data = get_plugins_info(args.plugin_uri)
 
     if args.debug:
@@ -657,3 +703,9 @@ if __name__ == '__main__':
         kw = {}
 
     print(json.dumps(plugin_data, sort_keys=True, **kw))
+
+
+if __name__ == '__main__':
+    import sys
+
+    sys.exit(main() or 0)
