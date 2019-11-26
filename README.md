@@ -8,7 +8,7 @@ A collection of utilities and tools for the JACK audio ecosystem
 The scripts in the `jackaudiotools.transport` package query or manipulate the
 JACK transport state.
 
-They require the `JACK-Client` package to be installed, which will be installed
+They require the [JACK-Client] package to be installed, which will be installed
 automatically, when you install the `jack-audio-tools` distribution via `pip`:
 
     pip install jack-audio-tools
