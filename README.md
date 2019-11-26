@@ -1,6 +1,6 @@
 # jack-audio-tools
 
-A collection of utilities and tools for the JACK audio ecosystem
+A collection of utilities and tools for the [JACK] audio ecosystem
 
 
 ## JACK Transport
@@ -23,22 +23,22 @@ and MIDI machine control (MMC) messages into JACK transport commands.
 
 The following MIDI messages, when received, start the JACK transport:
 
-* START (System Real-time)
-* CONTINUE (System Real-time)
-* PLAY (MMC)
-* DEFERRED PLAY (MMC)
+* `START` (System Real-time)
+* `CONTINUE` (System Real-time)
+* `PLAY` (MMC)
+* `DEFERRED PLAY` (MMC)
 
 These messages stop the transport:
 
-* STOP (System Real-time)
-* STOP (MMC)
-* PAUSE (MMC)
-* RESET (MMC)
+* `STOP` (System Real-time)
+* `STOP` (MMC)
+* `PAUSE` (MMC)
+* `RESET` (MMC)
 
 And these rewind the transport to frame zero:
 
-* REWIND (MMC)
-* RESET (MMC)
+* `REWIND` (MMC)
+* `RESET` (MMC)
 
 MMC messages are ignored, if the device number in the MMC System Exclusive
 message does not match the client's device number (set with the -d command
@@ -78,7 +78,7 @@ Query or change the JACK transport state.
 ## LV2
 
 The scripts in the `jackaudiotools.lv2` package help with querying information
-from the LV2 plugins installed on the system.
+from the [LV2] plugins installed on the system.
 
 They require the [lilv] Python bindings to be installed. Unfortunately, these
 can not be installed from the Python Package Index. Instead, install a recent
@@ -113,7 +113,8 @@ megabytes in size.
 
 ## Carla
 
-The scripts in the `jackaudiotools.carla` package
+The scripts in the `jackaudiotools.carla` package manipulate or query [Carla]
+project files.
 
 
 ### `carxp2lv2presets`
@@ -139,7 +140,10 @@ See the file [LICENSE](./LICENSE) for more information.
 This software is written by *Christopher Arndt*.
 
 
+[carla]: https://kx.studio/Applications:Carla
 [jack-client]: https://pypi.org/project/JACK-Client
+[jack]: https://jackaudio.org/
 [lilv]: http://drobilla.net/software/lilv
+[lv2]: http://lv2plug.in/
 [python-rtmidi]: https://pypi.org/project/python-rtmidi
 [rdflib]: https://pypi.org/project/rdflib
