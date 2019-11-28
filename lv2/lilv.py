@@ -9,12 +9,10 @@ __email__ = "d@drobilla.net"
 __status__ = "Production"
 
 import sys
+from ctypes import (CDLL, CFUNCTYPE, POINTER, Structure, byref, c_bool, c_char, c_char_p, c_double,
+                    c_float, c_int, c_size_t, c_uint, c_uint32, c_void_p, cast)
 
-from ctypes import Structure, CDLL, POINTER, CFUNCTYPE
-from ctypes import c_bool, c_double, c_float, c_int, c_size_t, c_uint, c_uint32
-from ctypes import c_char, c_char_p, c_void_p
-from ctypes import byref, cast
-
+from .lv2 import LV2_Descriptor, LV2_Feature, LV2_Handle, LV2_URID_Map, LV2_URID_Unmap
 
 # Option constants
 OPTION_FILTER_LANG = "http://drobilla.net/ns/lilv#filter-lang"
@@ -48,103 +46,6 @@ def _as_uri(obj):
 
 
 # LV2 types
-
-# lv2/core/lv2.h
-
-LV2_Handle = c_void_p
-
-class LV2_Feature(Structure):
-    __slots__ = ["URI", "data"]
-    _fields_ = [
-        ("URI", c_char_p),
-        ("data", c_void_p)
-    ]
-
-
-class LV2_Descriptor(Structure):
-    __slots__ = [
-        "URI",
-        "instantiate",
-        "connect_port",
-        "activate",
-        "run",
-        "deactivate",
-        "cleanup",
-        "extension_data",
-    ]
-    _fields_ = [
-        ("URI", c_char_p),
-        (
-            "instantiate",
-            CFUNCTYPE(
-                LV2_Handle,
-                POINTER(LV2_Descriptor),
-                c_double,
-                c_char_p,
-                POINTER(POINTER(LV2_Feature)),
-            ),
-        ),
-        ("connect_port", CFUNCTYPE(None, LV2_Handle, c_uint32, POINTER(None))),
-        ("activate", CFUNCTYPE(None, LV2_Handle)),
-        ("run", CFUNCTYPE(None, LV2_Handle, c_uint32)),
-        ("deactivate", CFUNCTYPE(None, LV2_Handle)),
-        ("cleanup", CFUNCTYPE(None, LV2_Handle)),
-        ("extension_data", CFUNCTYPE(c_void_p, c_char_p)),
-    ]
-
-
-# lv2/urid/urid.h
-
-LV2_URID_Map_Handle = POINTER(None)
-LV2_URID_Unmap_Handle = POINTER(None)
-LV2_URID = c_uint32
-
-map_func_t = CFUNCTYPE(LV2_URID, LV2_URID_Map_Handle, c_char_p)
-unmap_func_t = CFUNCTYPE(c_char_p, LV2_URID_Unmap_Handle, LV2_URID)
-
-
-class LV2_URID_Map(Structure):
-    __slots__ = ["handle", "map"]
-    _fields_ = [
-        ("handle", LV2_URID_Map_Handle),
-        ("map", map_func_t),
-    ]
-
-
-class LV2_URID_Unmap(Structure):
-    __slots__ = ["handle", "unmap"]
-    _fields_ = [
-        ("handle", LV2_URID_Unmap_Handle),
-        ("unmap", unmap_func_t),
-    ]
-
-
-# lv2/options/options.h
-
-LV2_OPTIONS_INSTANCE = 0
-LV2_OPTIONS_RESOURCE = 1
-LV2_OPTIONS_BLANK = 2
-LV2_OPTIONS_PORT = 3
-
-
-class LV2_Options_Option(Structure):
-    __slots__ = [
-        "context",
-        "subject",
-        "key",
-        "size",
-        "type",
-        "value",
-    ]
-    _fields_ = [
-        ("context", c_uint),
-        ("subject", c_uint32),
-        ("key", LV2_URID),
-        ("size", c_uint32),
-        ("type", LV2_URID),
-        ("value", c_void_p),
-    ]
-
 
 # Lilv types
 
@@ -845,7 +746,7 @@ class Node(Structure):
         Returns None if value is not a file URI."""
         c_str = c.node_get_path(self.node, hostname)
         string = cast(c_str, c_char_p).value.decode("utf-8")
-        if sys.platform != 'win32': # TODO: Memory comes from libserd
+        if sys.platform != 'win32':  # TODO: Memory comes from libserd
             c.free(c_str)
         return string
 
@@ -965,7 +866,6 @@ class Plugins(Collection):
 
     def __init__(self, world, collection):
         assert type(collection) == POINTER(Plugins)
-        #assert collection
 
         def constructor(world, plugin):
             return Plugin.wrap(world, plugin)
@@ -1011,7 +911,6 @@ class PluginClasses(Collection):
 
     def __init__(self, world, collection, owning=False):
         assert type(collection) == POINTER(PluginClasses)
-        #assert collection
 
         self.owning = owning
         super(PluginClasses, self).__init__(
@@ -1063,7 +962,7 @@ class UIs(Collection):
 
     def __init__(self, world, collection):
         assert type(collection) == POINTER(UIs)
-        #assert collection
+
         super(UIs, self).__init__(
             world,
             collection,
