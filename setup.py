@@ -49,7 +49,7 @@ Topic :: Multimedia :: Sound/Audio
 
 setup(
     name='jack-audio-tools',
-    version="0.2.0",
+    version="0.3.0",
     description="A collection of utilities and tools for the JACK audio ecosystem",
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
