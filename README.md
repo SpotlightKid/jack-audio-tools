@@ -90,6 +90,10 @@ repository or from source.
 
 Print URIs of all installed LV2 plugins matching the given regular expression.
 
+Can optionally output the list of matching plugins in JSON format, where each
+list item is an object with the plugin name and uri and optionally the list of
+categories the plugin belongs to, as properties.
+
 
 ### `lv2-plugin-uris`
 

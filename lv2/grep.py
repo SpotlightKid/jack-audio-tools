@@ -12,14 +12,18 @@ import lilv
 
 def main(args=None):
     ap = argparse.ArgumentParser()
+    ap.add_argument('-c', '--categories', action="store_true",
+                    help="Add list of categories for each plugin (requires -j)")
     ap.add_argument('-i', '--ignore-case', action="store_true",
                     help="Ignore case")
     ap.add_argument('-j', '--json', action="store_true",
                     help="Print output as list of objects in JSON format")
-    ap.add_argument('pattern', help="LV2 plugin URI pattern")
-
+    ap.add_argument('pattern', nargs='?', help="LV2 plugin URI pattern")
     args = ap.parse_args(args)
-    rx = re.compile(args.pattern, re.I if args.ignore_case else 0)
+
+    if args.pattern:
+        rx = re.compile(args.pattern, re.I if args.ignore_case else 0)
+
     world = lilv.World()
     world.load_all()
 
@@ -27,12 +31,27 @@ def main(args=None):
     for node in world.get_all_plugins():
         uri = str(node.get_uri())
 
-        if rx.search(uri):
+        if not args.pattern or rx.search(uri):
             if args.json:
                 # load all resources in bundle
                 world.load_resource(uri)
                 name = node.get_name()
-                results.append({'name': str(name) if name is not None else None, 'uri': uri})
+                plugin_data = {
+                    'name': str(name) if name is not None else None,
+                    'uri': uri
+                }
+
+                if args.categories:
+                    categories = []
+
+                    for cat in node.get_value(world.ns.rdf.type):
+                        cat = str(cat)
+                        if not cat.endswith('#Plugin'):
+                            categories.append(str(cat).split('#', 1)[-1])
+
+                    plugin_data['categories'] = categories
+
+                results.append(plugin_data)
             else:
                 print(uri)
 
