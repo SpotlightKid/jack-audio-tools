@@ -18,6 +18,8 @@ def main(args=None):
                     help="Ignore case")
     ap.add_argument('-j', '--json', action="store_true",
                     help="Print output as list of objects in JSON format")
+    ap.add_argument('-p', '--pretty', action="store_true",
+                    help="Pretty format JSON output with indentation and linebreaks")
     ap.add_argument('pattern', nargs='?', help="LV2 plugin URI pattern")
     args = ap.parse_args(args)
 
@@ -56,7 +58,7 @@ def main(args=None):
                 print(uri)
 
     if args.json:
-        json.dump(results, sys.stdout, indent=2)
+        json.dump(results, sys.stdout, indent=2 if args.pretty else None)
 
 
 if __name__ == '__main__':
