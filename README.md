@@ -75,6 +75,51 @@ to other JACK clients.
 Query or change the JACK transport state.
 
 
+## JACK D-BUS
+
+The scripts in the `jackaudiotools.jackdbus` package interface with the JACK
+D-BUS service to query information about the status of the JACK server and/or
+control its operation.
+
+These scripts require the [PyGobject]  and [dbus-python] packages to be
+installed. To install these, specify the `dbus` extra dependency when
+installing the `jack-audio-tools` distribution via `pip`:
+
+    pip install "jack-audio-tools[dbus]"
+
+
+### `jack-dbus-monitor`
+
+This script monitors the JACK server via D-BUS and runs a command on status
+changes and optionally at a given interval passing some JACK stats in the
+environment.
+
+Here is an example shell script to use as a command:
+
+```bash
+#!/bin/bash
+
+event="$1"  # 'start', 'stop' or 'status'
+echo "JACK event: $event"
+
+if [[ "$event" = "status" ]]; then
+    echo "IS_STARTED: $IS_STARTED"
+    echo "IS_REALTIME: $IS_REALTIME"
+    echo "PERIOD: $PERIOD"
+    echo "LATENCY: $LATENCY"
+    echo "LOAD: $LOAD"
+    echo "XRUNS: $XRUNS"
+    echo "SAMPLERATE: $SAMPLERATE"
+fi
+```
+
+Save this a `jack_status.sh` and use it like so:
+
+```console
+jack-dbus-monitor --interval-stats 1000 ./jack_status.sh
+```
+
+
 ## LV2
 
 The scripts in the `jackaudiotools.lv2` package help with querying information
@@ -145,9 +190,11 @@ This software is written by *Christopher Arndt*.
 
 
 [carla]: https://kx.studio/Applications:Carla
+[dbus-python]: https://pypi.org/project/dbus-python
 [jack-client]: https://pypi.org/project/JACK-Client
 [jack]: https://jackaudio.org/
 [lilv]: http://drobilla.net/software/lilv
 [lv2]: http://lv2plug.in/
+[PyGObject]: https://pypi.org/project/PyGobject
 [python-rtmidi]: https://pypi.org/project/python-rtmidi
 [rdflib]: https://pypi.org/project/rdflib

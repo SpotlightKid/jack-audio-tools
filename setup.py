@@ -19,6 +19,7 @@ for name, mod, *extras in [
         ('jack-transporter', "transport.transporter"),
         ('jack-midi-to-transport', "transport.midi_to_transport"),
         ('jack-rtmidi-to-transport', "transport.rtmidi_to_transport", "rtmidi"),
+        ('jack-dbus-monitor', "jackdbus.jackmonitor", "dbus"),
         #('lv2-grep', "lv2.lv2_grep", "lilv"),
         ('lv2-grep', "lv2.grep"),
         #('lv2-list-plugin-presets', "lv2.lv2_list_plugin_presets", "lilv")]:
@@ -62,6 +63,7 @@ setup(
     packages=[
         'jackaudiotools.carla',
         'jackaudiotools.lv2',
+        'jackaudiotools.jackdbus',
         'jackaudiotools.transport',
     ],
     package_dir={'jackaudiotools': ''},
@@ -74,6 +76,7 @@ setup(
         #'lilv': ["lilv"],
         'rtmidi': ['python-rtmidi'],
         'rdflib': ['rdflib'],
+        'dbus': ['PyGObject', "dbus-python"],
     },
     python_requires='>=3',
     entry_points={
