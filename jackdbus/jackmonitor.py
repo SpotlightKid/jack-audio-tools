@@ -174,7 +174,7 @@ class JackMonitor:
         if args and isinstance(args[0], dbus.DBusException):
             if 'org.freedesktop.DBus.Error.ServiceUnknown' in str(args[0]) and self.jackctl:
                 log.warning("JackCtl D-BUS service vanished. Assuming JACK is stopped.")
-                self.update_jack_status(False, name='is_started')
+                self.update_jack_status(0, name='is_started')
                 self.jackctl = None
                 if self.args.interval_reconnect > 0:
                     GLib.timeout_add(self.args.interval_reconnect, self.dbus_connect)
@@ -185,9 +185,9 @@ class JackMonitor:
     def handle_jackctl_signal(self, *args, signal=None, **kw):
         log.debug("JackCtl signal received: %r", signal)
         if signal == 'ServerStarted':
-            self.update_jack_status(True, name='is_started')
+            self.update_jack_status(1, name='is_started')
         elif signal == 'ServerStopped':
-            self.update_jack_status(False, name='is_started')
+            self.update_jack_status(0, name='is_started')
 
     def update_jack_status(self, value, name=None):
         old_status = self.jack_status.get(name)
@@ -221,7 +221,7 @@ class JackMonitor:
                 self.jackctl.get_latency(cb, ecb)
             except dbus.exceptions.DBusException:
                 log.warning("JackCtl D-BUS service failure. Assuming JACK is stopped.")
-                self.update_jack_status(False, name='is_started')
+                self.update_jack_status(0, name='is_started')
 
         return True
 
