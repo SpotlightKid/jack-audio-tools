@@ -53,7 +53,7 @@ MMC message device numbers.
 JACK client which allows to control transport state via MIDI.
 
 A variant of `midi_to_transport`, which uses the [python-rtmidi] package
-as a MIDI backend instead of JACK-Cleint, which is slightly more efficient,
+as a MIDI backend instead of JACK-Client, which is slightly more efficient,
 because MIDI input processing is happening in a C++ thread instead of a
 Python callback.
 
@@ -113,7 +113,7 @@ if [[ "$event" = "status" ]]; then
 fi
 ```
 
-Save this a `jack_status.sh` and use it like so:
+Save this as `jack_status.sh` and use it like so:
 
 ```console
 jack-dbus-monitor --interval-stats 1000 ./jack_status.sh
