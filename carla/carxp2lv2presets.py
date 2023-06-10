@@ -71,7 +71,7 @@ def create_lv2_preset(label, plugin):
 
         graph.add((preset, NS.state.state, state))
 
-    return graph.serialize(format='turtle').decode()
+    return graph.serialize(format='turtle')
 
 
 def create_manifest(uri, filename):
@@ -81,7 +81,7 @@ def create_manifest(uri, filename):
     graph.add((preset, NS.lv2.appliesTo, URIRef(uri)))
     graph.add((preset, RDFS.seeAlso, URIRef(filename)))
 
-    return graph.serialize(format='turtle').decode()
+    return graph.serialize(format='turtle')
 
 
 def link_or_copy_path(path, dst, always_copy=False):
