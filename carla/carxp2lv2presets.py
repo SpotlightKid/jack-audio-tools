@@ -7,7 +7,8 @@ import os
 import re
 import shutil
 import sys
-from os.path import basename, exists, expanduser, isabs, isdir, isfile, join, splitext
+from os.path import basename, dirname, exists, expanduser, isabs, isdir, isfile, join, splitext
+from urllib.parse import quote as urlquote
 
 import rdflib
 from rdflib import Graph, Literal, BNode, URIRef
@@ -108,7 +109,7 @@ def link_or_copy_path(path, dst, always_copy=False):
         log.warning("Path '%s' does not exist locally. The preset might not restore the full "
                     "state of the plugin.", path)
 
-    return path
+    return urlquote(path)
 
 
 def main(args=None):
@@ -170,6 +171,9 @@ def main(args=None):
 
                 if not isabs(path):
                     path = join(args.base_dir, path)
+
+                    if not exists(path):
+                        path = join(dirname(args.carlaproject), "Carla", plugin.name, prop.value)
 
                 prop.value = link_or_copy_path(path, join(bundle_path, basename(path)),
                                                always_copy=args.copy_files)
